@@ -1,18 +1,6 @@
-var preloadTotal = 1;
-var background1 = new image();
-
-function startGame(){
-	preloadAssets();
-}
-
-function preloadAssets(){
-	imgBackground1.onload = preloadUpdate();
-	imgBackground1.src = "background1.png";
-}
-
-function preloadUpdate(){
-	preloadCount++;
-	if(preloadCount == preloadTotal){
-		launchGame();
-	}
+function draw(){
+	var ctx = document.getElementById("gameCanvas").getContext("2d");
+	var img = new Image();
+	img.src = "background1.png";
+	ctx.drawImage(img,0,0);
 }
