@@ -21,8 +21,12 @@ function Background(){
 	this.speed = 1;
 	this.draw = function(){
 		this.y += this.speed;
+		if (this.y >= 600) {
+			this.y = 0;
+		}
 		this.ctx = document.getElementById("gameCanvas").getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y);
+		this.ctx.drawImage(this.image, this.x, this.y - 600);
 	}
 }
 
