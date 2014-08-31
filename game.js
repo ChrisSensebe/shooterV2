@@ -4,16 +4,12 @@ var imageRepository = new function(){
 	this.background1.src = "background1.png";
 }
 
-function draw(){
-	var ctx = document.getElementById("gameCanvas").getContext("2d");
-	ctx.drawImage(imageRepository.background1, 0, 0);
-}
-
 //base class for drawable objects
 function Drawable(){
-	this.init = function(x,y){
+	this.init = function(x,y,image){
 		this.x = x;
 		this.y = y;
+		this.image = image;
 	}
 	this.speed = 0;
 	this.canvasWidth = 0;
@@ -24,15 +20,22 @@ function Drawable(){
 function Background(){
 	this.speed = 1;
 	this.draw = function(){
+		this.y += this.speed;
 		this.ctx = document.getElementById("gameCanvas").getContext("2d");
-		this.ctx.drawImage(imageRepository.background1, this.x, this.y);
+		this.ctx.drawImage(this.image, this.x, this.y);
 	}
 }
 
+//Background inherits from Drawable
 Background.prototype = new Drawable();
 
 function game(){
 	this.background1 = new Background();
-	this.background1.init(0,0);
-	this.background1.draw();
+	this.background1.init(0,0,imageRepository.background1);
+
+	setInterval(gameLoop, 1000/60);
+
+	function gameLoop(){
+		this.background1.draw();
+	}
 }
