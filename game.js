@@ -14,6 +14,8 @@ function(e){
 	delete touches[e.keyCode];
 });
 
+
+//holds all images for the game
 var imageRepository = new function(){
 	//background1
 	this.background1 = new Image();
@@ -35,7 +37,7 @@ function Drawable(){
 	this.canvasHeight = 0;
 }
 
-//background object
+//Background object, inherits from Drawable
 function Background(){
 	this.speed = 1;
 	this.draw = function(){
@@ -48,8 +50,31 @@ function Background(){
 		this.y += this.speed;
 	}
 }
-//Background inherits from Drawable
 Background.prototype = new Drawable();
+
+//Player object, inherits from Drawable
+function Player(){
+	this.speed = 4;
+	this.draw = function(){
+		this.ctx = document.getElementById("playerCanvas").getContext("2d");
+		this.ctx.drawImage(this.image, this.x, this.y)
+	}
+	this.move = function(){
+		if(38 in touches && this.y >=0){
+			this.y -= playerSpeed;
+		}
+		if(40 in touches && this.y <= 575){
+			this.y += playerSpeed;
+		}
+		if(39 in touches && this.x <= 775){
+			this.x += playerSpeed;
+		}
+		if (37 in touches && this.x >= 0) {
+			this.x -= playerSpeed;
+		}
+	}
+	this
+} 
 
 function game(){
 	//background initialisation
