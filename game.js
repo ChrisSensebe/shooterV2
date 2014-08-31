@@ -1,3 +1,19 @@
+var keys = {};
+
+//event listeners
+addEventListener("keydown",
+	function(e){
+	touches[e.keyCode] = true;
+	if((e.keyCode >= 37)&&(e.keyCode <= 40)){
+		e.preventDefault();
+	}
+});
+
+addEventListener("keyup",
+function(e){
+	delete touches[e.keyCode];
+});
+
 var imageRepository = new function(){
 	//background1
 	this.background1 = new Image();
