@@ -24,7 +24,7 @@ function Background(){
 		if (this.y >= 600) {
 			this.y = 0;
 		}
-		this.ctx = document.getElementById("gameCanvas").getContext("2d");
+		this.ctx = document.getElementById("backgroundCanvas").getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y);
 		this.ctx.drawImage(this.image, this.x, this.y - 600);
 	}
@@ -34,12 +34,12 @@ function Background(){
 Background.prototype = new Drawable();
 
 function game(){
-	this.background1 = new Background();
-	this.background1.init(0,0,imageRepository.background1);
+	background1 = new Background();
+	background1.init(0,0,imageRepository.background1);
 
 	setInterval(gameLoop, 1000/60);
 
 	function gameLoop(){
-		this.background1.draw();
+		background1.draw();
 	}
 }
