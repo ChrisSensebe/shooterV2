@@ -1,5 +1,4 @@
 var keys = {};
-
 //event listeners
 addEventListener("keydown",
 	function(e){
@@ -8,7 +7,6 @@ addEventListener("keydown",
 		e.preventDefault();
 	}
 });
-
 addEventListener("keyup",
 function(e){
 	delete keys[e.keyCode];
@@ -38,7 +36,6 @@ function Drawable(){
 	this.canvasWidth = 0;
 	this.canvasHeight = 0;
 }
-
 //Background object, inherits from Drawable
 function Background(){
 	this.speed = 1;
@@ -53,7 +50,6 @@ function Background(){
 	}
 }
 Background.prototype = new Drawable();
-
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
@@ -81,6 +77,20 @@ function Player(){
 	}
 }
 Player.prototype = new Drawable();
+
+//creates a pool of bullets
+function BulletPool(maxSize){
+	var size = maxSize;
+	var pool = [];
+	//populates the array
+	this.init = function(){
+		for (var i = 0; i < this.size; i++) {
+			var bullet = new Bullet();
+			bullet.init(0,0,10,10,imageRepository.bullet);
+			pool[i] = bullet;
+		}
+	}
+}
 
 function game(){
 	//background initialisation
