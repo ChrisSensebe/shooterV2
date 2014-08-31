@@ -20,26 +20,28 @@ function Drawable(){
 function Background(){
 	this.speed = 1;
 	this.draw = function(){
-		this.y += this.speed;
-		if (this.y >= 600) {
+		if (this.y >= this.canvasHeight) {
 			this.y = 0;
 		}
 		this.ctx = document.getElementById("backgroundCanvas").getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y);
-		this.ctx.drawImage(this.image, this.x, this.y - 600);
+		this.ctx.drawImage(this.image, this.x, this.y - this.canvasHeight);
+		this.y += this.speed;
 	}
 }
-
 //Background inherits from Drawable
 Background.prototype = new Drawable();
 
 function game(){
+	//background initialisation
 	background1 = new Background();
 	background1.init(0,0,imageRepository.background1);
+	background1.canvasWidth = document.getElementById("backgroundCanvas").width;
+	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
-	setInterval(gameLoop, 1000/60);
+	setInterval(backgroundLoop, 1000/60);
 
-	function gameLoop(){
+	function backgroundLoop(){
 		background1.draw();
 	}
 }
