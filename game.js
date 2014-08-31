@@ -3,7 +3,7 @@ var keys = {};
 //event listeners
 addEventListener("keydown",
 	function(e){
-	touches[e.keyCode] = true;
+	keys[e.keyCode] = true;
 	if((e.keyCode >= 37)&&(e.keyCode <= 40)){
 		e.preventDefault();
 	}
@@ -11,7 +11,7 @@ addEventListener("keydown",
 
 addEventListener("keyup",
 function(e){
-	delete touches[e.keyCode];
+	delete keys[e.keyCode];
 });
 
 
@@ -57,24 +57,25 @@ function Player(){
 	this.speed = 4;
 	this.draw = function(){
 		this.ctx = document.getElementById("playerCanvas").getContext("2d");
+		//this.ctx.clearRect;
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
 	this.move = function(){
-		if(38 in touches && this.y >=0){
+		if(38 in keys && this.y >=0){
 			this.y -= playerSpeed;
 		}
-		if(40 in touches && this.y <= 575){
+		if(40 in keys && this.y <= 575){
 			this.y += playerSpeed;
 		}
-		if(39 in touches && this.x <= 775){
+		if(39 in keys && this.x <= 775){
 			this.x += playerSpeed;
 		}
-		if (37 in touches && this.x >= 0) {
+		if (37 in keys && this.x >= 0) {
 			this.x -= playerSpeed;
 		}
 	}
-	this
-} 
+}
+Player.prototype = new Drawable();
 
 function game(){
 	//background initialisation
@@ -84,8 +85,12 @@ function game(){
 	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
 	setInterval(backgroundLoop, 1000/60);
+	setInterval(playerLoop, 1000/60);
 
 	function backgroundLoop(){
 		background1.draw();
+	}
+	function playerLoop(){
+		
 	}
 }
