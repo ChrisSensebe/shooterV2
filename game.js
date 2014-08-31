@@ -19,10 +19,10 @@ var imageRepository = new function(){
 	this.background1 = new Image();
 	this.background1.src = "background1.png";
 	//player
-	this.player = new Image;
+	this.player = new Image();
 	this.player.src = "player.png";
 	//bullet
-	this.bullet = new Image;
+	this.bullet = new Image();
 	this.bullet.src = "shoot1.png";
 }
 
@@ -57,6 +57,8 @@ Background.prototype = new Drawable();
 function Player(){
 	this.speed = 4;
 	this.ctx = document.getElementById("playerCanvas").getContext("2d");
+	this.bulletPool = new BulletPool(15);
+	this.bulletPool.init();
 	var fireRate = 15;
 	var counter = 0;
 	this.draw = function(){
@@ -80,6 +82,13 @@ function Player(){
 			}
 			this.draw();
 		}
+		if(32 in keys && counter >= fireRate){
+			this.fire();
+			counter = 0;
+		}
+	}
+	this.fire = function(){
+		this.bulletPool.get(this.x + this.width/2, this.y);
 	}
 }
 Player.prototype = new Drawable();
@@ -98,7 +107,7 @@ function Bullet(){
 	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
 	this.draw = function(){
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-		if(this.y <= (0 - this.height){
+		if(this.y <= (0 - this.height)){
 			return true;
 		}
 		else{
@@ -130,6 +139,7 @@ function BulletPool(maxSize){
 	}
 	//grabs last item from the list, if !alive initializes it and pushes it in front of the array
 	this.get = function(x,y,speed){
+		//console.log(pool);
 		if(!pool[size-1].alive){
 			pool[size-1].spawn(x,y,speed);
 			pool.unshift(pool.pop());
@@ -160,7 +170,7 @@ function game(){
 
 	//player initialisation
 	player = new Player();
-	player.init(375,275,50,50,imageRepository.player);
+	player.init(375,275,25,25,imageRepository.player);
 
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
