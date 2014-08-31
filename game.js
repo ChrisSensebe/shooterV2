@@ -55,23 +55,28 @@ Background.prototype = new Drawable();
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
+	this.width = 50;
+	this.height = 50;
+	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	this.draw = function(){
-		this.ctx = document.getElementById("playerCanvas").getContext("2d");
-		//this.ctx.clearRect;
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
 	this.move = function(){
-		if(38 in keys && this.y >=0){
-			this.y -= playerSpeed;
-		}
-		if(40 in keys && this.y <= 575){
-			this.y += playerSpeed;
-		}
-		if(39 in keys && this.x <= 775){
-			this.x += playerSpeed;
-		}
-		if (37 in keys && this.x >= 0) {
-			this.x -= playerSpeed;
+		if(37 in keys || 38 in keys || 39 in keys || 40 in keys){
+			this.ctx.clearRect(this.x,this.y,this.width,this.height);
+			if(38 in keys && this.y >=0){
+				this.y -= 4;
+			}
+			if(40 in keys && this.y <= 575){
+				this.y += 4;
+			}
+			if(39 in keys && this.x <= 775){
+				this.x += 4;
+			}
+			if (37 in keys && this.x >= 0) {
+				this.x -= 4;
+			}
+			this.draw();
 		}
 	}
 }
@@ -84,6 +89,10 @@ function game(){
 	background1.canvasWidth = document.getElementById("backgroundCanvas").width;
 	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
+	//player initialisation
+	player = new Player();
+	player.init(375,275,imageRepository.player);
+
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
 
@@ -91,6 +100,7 @@ function game(){
 		background1.draw();
 	}
 	function playerLoop(){
-		
+		player.draw();
+		player.move();
 	}
 }
