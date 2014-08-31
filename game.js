@@ -20,7 +20,10 @@ var imageRepository = new function(){
 	this.background1.src = "background1.png";
 	//player
 	this.player = new Image;
-	this.player.src = "player.png"
+	this.player.src = "player.png";
+	//bullet
+	this.bullet = new Image;
+	this.bullet.src = "shoot1.png";
 }
 
 //base class for drawable objects
@@ -77,6 +80,38 @@ function Player(){
 	}
 }
 Player.prototype = new Drawable();
+//Bullet object, inherits from Drawable
+function Bullet(){
+	//true if bullet is in use
+	this.alive = false;
+	this.ctx = document.getElementById("playerCanvas").getContext("2d");
+	//set bullet values when fired
+	this.spawn = function(x,y,speed){
+		this.x = x;
+		this.y = y;
+		this.speed = speed;
+		this.alive = true;
+	}
+	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
+	this.draw = function(){
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+		if(this.y <= -10){
+			return true;
+		}
+		else{
+			this.ctx.drawImage(this.image,this.x,this.y);
+			this.y -= this.speed;
+		}
+	}
+	//reset the bullet values
+	this.clear = function(){
+		this.x = 0;
+		this.y = 0;
+		this.speed = 0;
+		this.alive = false;
+	}
+}
+Bullet.prototype = new Drawable;
 
 //creates a pool of bullets
 function BulletPool(maxSize){
