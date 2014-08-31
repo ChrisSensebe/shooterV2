@@ -57,10 +57,13 @@ Background.prototype = new Drawable();
 function Player(){
 	this.speed = 4;
 	this.ctx = document.getElementById("playerCanvas").getContext("2d");
+	var fireRate = 15;
+	var counter = 0;
 	this.draw = function(){
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
 	this.move = function(){
+		counter++;
 		if(37 in keys || 38 in keys || 39 in keys || 40 in keys){
 			this.ctx.clearRect(this.x,this.y,this.width,this.height);
 			if(38 in keys && this.y >=0){
@@ -95,7 +98,7 @@ function Bullet(){
 	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
 	this.draw = function(){
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-		if(this.y <= -10){
+		if(this.y <= (0 - this.height){
 			return true;
 		}
 		else{
@@ -123,6 +126,27 @@ function BulletPool(maxSize){
 			var bullet = new Bullet();
 			bullet.init(0,0,10,10,imageRepository.bullet);
 			pool[i] = bullet;
+		}
+	}
+	//grabs last item from the list, if !alive initializes it and pushes it in front of the array
+	this.get = function(x,y,speed){
+		if(!pool[size-1].alive){
+			pool[size-1].spawn(x,y,speed);
+			pool.unshift(pool.pop());
+		}
+	}
+	//draws/animate any in use bullet until we find a bullet that is not alive
+	this.animate = function(){
+		for (var i = 0; i < size; i++) {
+			if (pool[i].alive) {
+				if (pool[i].draw()) {
+					pool[i].clear();
+					pool.push((pool.splice(i,1))[0]);
+				}
+			}
+			else{
+				break;
+			}
 		}
 	}
 }
