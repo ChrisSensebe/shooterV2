@@ -18,6 +18,9 @@ var imageRepository = new function(){
 	//background1
 	this.background1 = new Image();
 	this.background1.src = "background1.png";
+	//player
+	this.player = new Image;
+	this.player.src = "player.png"
 }
 
 //base class for drawable objects
