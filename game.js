@@ -27,9 +27,11 @@ var imageRepository = new function(){
 
 //base class for drawable objects
 function Drawable(){
-	this.init = function(x,y,image){
+	this.init = function(x,y,width,height,image){
 		this.x = x;
 		this.y = y;
+		this.width = width;
+		this.height = height;
 		this.image = image;
 	}
 	this.speed = 0;
@@ -55,8 +57,6 @@ Background.prototype = new Drawable();
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
-	this.width = 50;
-	this.height = 50;
 	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	this.draw = function(){
 		this.ctx.drawImage(this.image, this.x, this.y)
@@ -85,13 +85,13 @@ Player.prototype = new Drawable();
 function game(){
 	//background initialisation
 	background1 = new Background();
-	background1.init(0,0,imageRepository.background1);
+	background1.init(0,0,0,0,imageRepository.background1);
 	background1.canvasWidth = document.getElementById("backgroundCanvas").width;
 	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
 	//player initialisation
 	player = new Player();
-	player.init(375,275,imageRepository.player);
+	player.init(375,275,50,50,imageRepository.player);
 
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
