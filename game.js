@@ -56,16 +56,20 @@ Background.prototype = new Drawable();
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
-	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
+	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	var fireRate = 15;
 	var counter = 0;
+	this.count = function(){
+		if(counter<15){
+			counter++;
+		}
+	}
 	this.draw = function(){
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
-	this.move = function(){
-		counter++;
+	this.inputs = function(){
 		if(37 in keys || 38 in keys || 39 in keys || 40 in keys){
 			this.ctx.clearRect(this.x,this.y,this.width,this.height);
 			if(38 in keys && this.y >=0){
@@ -88,7 +92,7 @@ function Player(){
 		}
 	}
 	this.fire = function(){
-		this.bulletPool.get(this.x + this.width/2, this.y);
+		this.bulletPool.get(this.x+7, this.y, 6);
 	}
 }
 Player.prototype = new Drawable();
@@ -106,16 +110,16 @@ function Bullet(){
 	}
 	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
 	this.draw = function(){
-		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+		this.ctx.clearRect(this.x-1,this.y,this.width+2,this.height);
+		this.y -= this.speed;
 		if(this.y <= (0 - this.height)){
 			return true;
 		}
 		else{
 			this.ctx.drawImage(this.image,this.x,this.y);
-			this.y -= this.speed;
 		}
 	}
-	//reset the bullet values
+	//reset the bullet valuesb 
 	this.clear = function(){
 		this.x = 0;
 		this.y = 0;
@@ -131,7 +135,7 @@ function BulletPool(maxSize){
 	var pool = [];
 	//populates the array
 	this.init = function(){
-		for (var i = 0; i < this.size; i++) {
+		for (var i = 0; i < size; i++) {
 			var bullet = new Bullet();
 			bullet.init(0,0,10,10,imageRepository.bullet);
 			pool[i] = bullet;
@@ -139,7 +143,6 @@ function BulletPool(maxSize){
 	}
 	//grabs last item from the list, if !alive initializes it and pushes it in front of the array
 	this.get = function(x,y,speed){
-		//console.log(pool);
 		if(!pool[size-1].alive){
 			pool[size-1].spawn(x,y,speed);
 			pool.unshift(pool.pop());
@@ -170,7 +173,7 @@ function game(){
 
 	//player initialisation
 	player = new Player();
-	player.init(375,275,25,25,imageRepository.player);
+	player.init(375,475,25,25,imageRepository.player);
 
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
@@ -179,7 +182,9 @@ function game(){
 		background1.draw();
 	}
 	function playerLoop(){
+		player.count();
+		player.inputs();
 		player.draw();
-		player.move();
+		player.bulletPool.animate();
 	}
 }
