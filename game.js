@@ -100,7 +100,7 @@ Player.prototype = new Drawable();
 function Bullet(){
 	//true if bullet is in use
 	this.alive = false;
-	this.ctx = document.getElementById("playerCanvas").getContext("2d");
+	this.ctx = document.getElementById("playerShootCanvas").getContext("2d");
 	//set bullet values when fired
 	this.spawn = function(x,y,speed){
 		this.x = x;
