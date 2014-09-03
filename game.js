@@ -135,10 +135,34 @@ function Enemy(){
 	this.draw = function(){
 		this.y += this.speed;
 		this.ctx.drawImage(this.image, this.x, this.y);
+		if (this.y > 650) {
+			this.y = Math.floor((Math.random()*600)-600);
+		}
 	}
 }
 Enemy.prototype = new Drawable;
 
+//creates a pool of enemies
+function EnemyPool(maxSize){
+	var size = maxSize;
+	var pool = [];
+	//populates the array
+	this.init = function(){
+		for (var i = 0; i < size; i++){
+			var x = Math.floor((Math.random()*800));
+			var y = Math.floor((Math.random()*600)-600);
+			var enemy = new Enemy();
+			enemy.init(x,y,50,50,imageRepository.enemy1);
+			pool[i] = enemy;
+		}
+	}
+	//animates enemies
+	this.animate = function(){
+		for (var i = 0; i < pool.length; i++) {
+			pool[i].draw();
+		}
+	}
+}
 //creates a pool of bullets
 function BulletPool(maxSize){
 	var size = maxSize;
@@ -175,14 +199,18 @@ function BulletPool(maxSize){
 }
 
 function game(){
-	//background initialisation
+	//background init
 	background1 = new Background();
 	background1.init(0,0,0,0,imageRepository.background1);
 	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
-	//player initialisation
+	//player init
 	player = new Player();
 	player.init(375,475,25,25,imageRepository.player);
+
+	//enemyPool init
+	enemyPool1 = new EnemyPool();
+	enemyPool1.init();
 
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
