@@ -128,6 +128,16 @@ function Bullet(){
 	}
 }
 Bullet.prototype = new Drawable;
+//Enemy object, inherits from Drawable
+function Enemy(){
+	this.speed = 4;
+	this.ctx = document.getElementById("enemyCanvas").getContext("2d");
+	this.draw = function(){
+		this.y += this.speed;
+		this.ctx.drawImage(this.image, this.x, this.y);
+	}
+}
+Enemy.prototype = new Drawable;
 
 //creates a pool of bullets
 function BulletPool(maxSize){
