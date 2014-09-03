@@ -24,6 +24,9 @@ var imageRepository = new function(){
 	//bullet
 	this.bullet = new Image();
 	this.bullet.src = "shoot1.png";
+	//enemy1
+	this.enemy1 = new Image();
+	this.enemy1.src = "enemy1.png"
 }
 
 //base class for drawable objects
@@ -133,10 +136,12 @@ function Enemy(){
 	this.speed = 4;
 	this.ctx = document.getElementById("enemyCanvas").getContext("2d");
 	this.draw = function(){
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 		this.y += this.speed;
 		this.ctx.drawImage(this.image, this.x, this.y);
 		if (this.y > 650) {
 			this.y = Math.floor((Math.random()*600)-600);
+			this.x = Math.floor(Math.random()*800)
 		}
 	}
 }
@@ -149,7 +154,7 @@ function EnemyPool(maxSize){
 	//populates the array
 	this.init = function(){
 		for (var i = 0; i < size; i++){
-			var x = Math.floor((Math.random()*800));
+			var x = Math.floor(Math.random()*800);
 			var y = Math.floor((Math.random()*600)-600);
 			var enemy = new Enemy();
 			enemy.init(x,y,50,50,imageRepository.enemy1);
@@ -209,11 +214,12 @@ function game(){
 	player.init(375,475,25,25,imageRepository.player);
 
 	//enemyPool init
-	enemyPool1 = new EnemyPool();
+	enemyPool1 = new EnemyPool(10);
 	enemyPool1.init();
 
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
+	setInterval(enemyLoop, 1000/60);
 
 	function backgroundLoop(){
 		background1.draw();
@@ -223,5 +229,8 @@ function game(){
 		player.inputs();
 		player.draw();
 		player.bulletPool.animate();
+	}
+	function enemyLoop(){
+		enemyPool1.animate();
 	}
 }
