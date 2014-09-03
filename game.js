@@ -168,7 +168,6 @@ function game(){
 	//background initialisation
 	background1 = new Background();
 	background1.init(0,0,0,0,imageRepository.background1);
-	background1.canvasWidth = document.getElementById("backgroundCanvas").width;
 	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
 
 	//player initialisation
