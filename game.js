@@ -147,27 +147,6 @@ function Enemy(){
 }
 Enemy.prototype = new Drawable;
 
-//creates a pool of enemies
-function EnemyPool(maxSize){
-	var size = maxSize;
-	var pool = [];
-	//populates the array
-	this.init = function(){
-		for (var i = 0; i < size; i++){
-			var x = Math.floor(Math.random()*800);
-			var y = Math.floor((Math.random()*600)-600);
-			var enemy = new Enemy();
-			enemy.init(x,y,50,50,imageRepository.enemy1);
-			pool[i] = enemy;
-		}
-	}
-	//animates enemies
-	this.animate = function(){
-		for (var i = 0; i < pool.length; i++) {
-			pool[i].draw();
-		}
-	}
-}
 //creates a pool of bullets
 function BulletPool(maxSize){
 	var size = maxSize;
@@ -201,6 +180,34 @@ function BulletPool(maxSize){
 			}
 		}
 	}
+}
+//creates a pool of enemies
+function EnemyPool(maxSize){
+	var size = maxSize;
+	var pool = [];
+	//populates the array
+	this.init = function(){
+		for (var i = 0; i < size; i++){
+			var x = Math.floor(Math.random()*800);
+			var y = Math.floor((Math.random()*600)-600);
+			var enemy = new Enemy();
+			enemy.init(x,y,50,50,imageRepository.enemy1);
+			pool[i] = enemy;
+		}
+	}
+	//animates enemies
+	this.animate = function(){
+		for (var i = 0; i < pool.length; i++) {
+			pool[i].draw();
+		}
+	}
+}
+
+//box collision function
+function boxCollision(drawable1,drawable2){
+	var widthCollide = (drawable1.x > (drawable2.x-drawable1.width) && drawable1.x < (drawable2.x+drawable2.width));
+	var heightCollide = (drawable1.y > (drawable2.y-drawable1.height) && drawable1.y < (drawable2.y+drawable2.height));
+	return (widthCollide && heightCollide);
 }
 
 function game(){
