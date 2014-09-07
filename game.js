@@ -74,14 +74,18 @@ Background.prototype = new Drawable();
 function Player(){
 	this.speed = 4;
 	this.lives = 3;
+	this.invincibleTimer = 30;
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
 	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	var fireRate = 15;
-	var counter = 0;
+	var fireCounter = 0;
 	this.count = function(){
-		if(counter<15){
-			counter++;
+		if(fireCounter<15){
+			fireCounter++;
+		}
+		if (this.invincibleTimer<30) {
+			this.invincibleTimer++;
 		}
 	}
 	this.draw = function(){
@@ -104,9 +108,9 @@ function Player(){
 			}
 			this.draw();
 		}
-		if(32 in keys && counter >= fireRate){
+		if(32 in keys && fireCounter >= fireRate){
 			this.fire();
-			counter = 0;
+			fireCounter = 0;
 		}
 	}
 	this.fire = function(){
@@ -215,6 +219,7 @@ function EnemyPool(maxSize){
 	}
 	//animates enemies
 	this.animate = function(){
+		//checks if there is already a enemy at this position
 		for (var i = 0; i < pool.length; i++) {
 			for (var j = 0; j < pool.length; j++) {
 				if(pool[i]!=pool[j]){
@@ -232,7 +237,10 @@ function EnemyPool(maxSize){
 	this.collideWith = function(playerObj){
 		for (var i = 0; i < pool.length; i++) {
 			if(boxCollision(pool[i],playerObj)){
-				playerObj.lives--;
+				if(playerObj.invincibleTimer==30){
+					playerObj.invincibleTimer = 0;
+					playerObj.lives--;
+				}
 			}
 		}
 	}
