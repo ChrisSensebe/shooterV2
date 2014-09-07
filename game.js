@@ -59,6 +59,7 @@ Background.prototype = new Drawable();
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
+	this.lives = 3;
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
 	this.ctx = document.getElementById("playerCanvas").getContext("2d");
