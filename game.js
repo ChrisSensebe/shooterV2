@@ -28,7 +28,14 @@ var imageRepository = new function(){
 	this.enemy1 = new Image();
 	this.enemy1.src = "enemy1.png"
 }
-
+//UI
+function Text(txt){
+	this.txt = txt + player.lives;
+	this.ctx = document.getElementById("UICanvas").getContext("2d");
+	this.ctx.font = "30px Arial";
+	this.ctx.fillStyle ="blue";
+	this.ctx.fillText(this.txt,20,580);
+}
 //base class for drawable objects
 function Drawable(){
 	this.init = function(x,y,width,height,image){
@@ -212,6 +219,7 @@ function boxCollision(drawable1,drawable2){
 }
 
 function game(){
+
 	//background init
 	background1 = new Background();
 	background1.init(0,0,0,0,imageRepository.background1);
@@ -220,6 +228,9 @@ function game(){
 	//player init
 	player = new Player();
 	player.init(375,475,25,25,imageRepository.player);
+
+	//Ui
+	Text("lives : ");
 
 	//enemyPool init
 	enemyPool1 = new EnemyPool(10);
