@@ -29,12 +29,18 @@ var imageRepository = new function(){
 	this.enemy1.src = "enemy1.png"
 }
 //UI
-function Text(txt){
+function UI(txt){
 	this.txt = txt + player.lives;
-	this.ctx = document.getElementById("UICanvas").getContext("2d");
-	this.ctx.font = "30px Arial";
-	this.ctx.fillStyle ="blue";
-	this.ctx.fillText(this.txt,20,580);
+	this.init = function(x,y){
+		this.x = x;
+		this.y = y;
+	}
+	this.draw = function(){
+		this.ctx = document.getElementById("UICanvas").getContext("2d");
+		this.ctx.font = "30px Arial";
+		this.ctx.fillStyle ="blue";
+		this.ctx.fillText(this.txt,20,580);
+	}
 }
 //base class for drawable objects
 function Drawable(){
@@ -209,6 +215,14 @@ function EnemyPool(maxSize){
 			pool[i].draw();
 		}
 	}
+	//collison with player
+	this.collideWith = function(player){
+		for (var i = 0; i < pool.length; i++) {
+			if(boxCollision(pool[i],player)){
+				player.lives--;
+			}
+		}
+	}
 }
 
 //box collision function
@@ -229,16 +243,18 @@ function game(){
 	player = new Player();
 	player.init(375,475,25,25,imageRepository.player);
 
-	//Ui
-	Text("lives : ");
-
 	//enemyPool init
 	enemyPool1 = new EnemyPool(10);
 	enemyPool1.init();
 
+	//ui
+	ui = new UI("lives: ");
+	ui.init();
+
 	setInterval(backgroundLoop, 1000/60);
 	setInterval(playerLoop, 1000/60);
 	setInterval(enemyLoop, 1000/60);
+	setInterval(uiLoop, 1000/60);
 
 	function backgroundLoop(){
 		background1.draw();
@@ -251,5 +267,9 @@ function game(){
 	}
 	function enemyLoop(){
 		enemyPool1.animate();
+		enemyPool1.collideWith(player);
+	}
+	function uiLoop(){
+		ui.draw();
 	}
 }
