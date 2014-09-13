@@ -272,10 +272,14 @@ function game(){
 	livesText = new Text();
 	livesText.init(20,580,"lives: ");
 
-	setInterval(backgroundLoop, 1000/60);
-	setInterval(playerLoop, 1000/60);
-	setInterval(enemyLoop, 1000/60);
-	setInterval(hudLoop, 1000/60);
+	setInterval(gameLoop,1000/60);
+
+	function gameLoop(){
+		backgroundLoop();
+		playerLoop();
+		enemyLoop();
+		hudLoop();
+	}
 
 	function backgroundLoop(){
 		background1.draw();
