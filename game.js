@@ -238,9 +238,11 @@ function EnemyPool(maxSize){
 	this.collideWith = function(playerObj){
 		for (var i = 0; i < pool.length; i++) {
 			if(boxCollision(pool[i],playerObj)){
-				if(playerObj.invincibleTimer==30){
-					playerObj.invincibleTimer = 0;
-					playerObj.lives--;
+				if(pixelLevelCollision(pool[i],playerObj)){
+					if(playerObj.invincibleTimer==30){
+						playerObj.invincibleTimer = 0;
+						playerObj.lives--;
+					}
 				}
 			}
 		}
@@ -252,6 +254,36 @@ function boxCollision(drawable1,drawable2){
 	var widthCollide = (drawable1.x > (drawable2.x-drawable1.width) && drawable1.x < (drawable2.x+drawable2.width));
 	var heightCollide = (drawable1.y > (drawable2.y-drawable1.height) && drawable1.y < (drawable2.y+drawable2.height));
 	return (widthCollide && heightCollide);
+}
+
+//pixel level collision detection
+function pixelLevelCollision(drawable1,drawable2){
+
+	var collisionBoxX = drawable1.x < drawable2.x ? drawable2.x : drawable1.x;
+	var collisionBoxY = drawable1.y < drawable2.y ? drawable2.y : drawable1.y;
+	var xMax = (drawable1.width + drawable1.x) < (drawable2.width + drawable2.x) ? (drawable1.width + drawable1.x) : (drawable2.width + drawable2.x);
+	var collisionBoxWidth = xMax - collisionBoxX;
+	var yMax = (drawable1.height + drawable1.y) < (drawable2.height + drawable2.y) ? (drawable1.height + drawable1.y) : (drawable2.height + drawable2.y);
+	var collisionBoxHeight = yMax - collisionBoxY;
+
+	var canvas1 = drawable1.canvas;
+	var context1 = canvas1.getContext('2d');
+	context1.clearRect (0,0,canvas1.width,canvas1.height);
+	context1.drawImage(drawable1.image,drawable1.x,drawable1.y);
+	var drawable1Data = context1.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
+
+	var canvas2 = drawable2.canvas;
+	var context2 = canvas2.getContext('2d');
+	context2.clearRect (0,0,canvas1.width,canvas1.height);
+	context2.drawImage(drawable2.image,drawable2.x,drawable2.y);
+	var drawable2Data = context2.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
+
+	for (var i = 3; i < drawable1Data.length; i += 4) {
+		if (drawable1Data[i]>0 && drawable2Data[i]>0) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function game(){
