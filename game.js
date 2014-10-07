@@ -234,18 +234,16 @@ function EnemyPool(maxSize){
 			pool[i].draw();
 		}
 	}
-	//collison with player
-	this.collideWith = function(playerObj){
-		for (var i = 0; i < pool.length; i++) {
-			if(boxCollision(pool[i],playerObj)){
-				if(pixelLevelCollision(pool[i],playerObj)){
-					if(playerObj.invincibleTimer==30){
-						playerObj.invincibleTimer = 0;
-						playerObj.lives--;
-					}
-				}
-			}
-		}
+	//returns pool
+	this.getPool = function(){
+		return pool;
+	}
+}
+
+//collision function between two drawable objects
+function collision(drawable1,drawable2){
+	if (boxCollision(drawable1,drawable2)){
+		return pixelLevelCollision(drawable1,drawable2);
 	}
 }
 
@@ -305,6 +303,7 @@ function game(){
 		playerLoop();
 		enemyLoop();
 		hudLoop();
+		collisions();
 	}
 
 	function backgroundLoop(){
@@ -318,10 +317,19 @@ function game(){
 	}
 	function enemyLoop(){
 		enemyPool1.animate();
-		enemyPool1.collideWith(player);
 	}
 	function hudLoop(){
 		livesText.draw();
 		livesText.txt = "lives: " + player.lives;
+	}
+	function collisions(){
+		for (var i = 0; i < enemyPool1.getPool().length; i++) {
+			if(collision(enemyPool1.getPool()[i],player)){
+				if(player.invincibleTimer==30){
+					player.invincibleTimer = 0;
+					player.lives--;
+				}
+			}
+		}
 	}
 }
