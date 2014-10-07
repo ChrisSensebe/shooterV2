@@ -45,12 +45,13 @@ function Text(){
 }
 //base class for drawable objects
 function Drawable(){
-	this.init = function(x,y,width,height,image){
+	this.init = function(x,y,image,canvas){
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.image = image;
+		this.width = image.width;
+		this.height = image.height;
+		this.canvas = document.getElementById(canvas);
 	}
 	this.speed = 0;
 	this.canvasWidth = 0;
@@ -60,12 +61,12 @@ function Drawable(){
 function Background(){
 	this.speed = 1;
 	this.draw = function(){
-		if (this.y >= this.canvasHeight) {
+		this.ctx = this.canvas.getContext("2d");
+		if (this.y >= this.canvas.height) {
 			this.y = 0;
 		}
-		this.ctx = document.getElementById("backgroundCanvas").getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y);
-		this.ctx.drawImage(this.image, this.x, this.y - this.canvasHeight);
+		this.ctx.drawImage(this.image, this.x, this.y - this.canvas.height);
 		this.y += this.speed;
 	}
 }
@@ -77,7 +78,6 @@ function Player(){
 	this.invincibleTimer = 30;
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
-	this.ctx = document.getElementById("playerCanvas").getContext("2d");
 	var fireRate = 15;
 	var fireCounter = 0;
 	this.count = function(){
@@ -89,6 +89,7 @@ function Player(){
 		}
 	}
 	this.draw = function(){
+		this.ctx = this.canvas.getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
 	this.inputs = function(){
@@ -122,7 +123,6 @@ Player.prototype = new Drawable();
 function Bullet(){
 	//true if bullet is in use
 	this.alive = false;
-	this.ctx = document.getElementById("playerShootCanvas").getContext("2d");
 	//set bullet values when fired
 	this.spawn = function(x,y,speed){
 		this.x = x;
@@ -132,6 +132,7 @@ function Bullet(){
 	}
 	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
 	this.draw = function(){
+		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x-1,this.y,this.width+2,this.height);
 		this.y -= this.speed;
 		if(this.y <= (0 - this.height)){
@@ -153,12 +154,12 @@ Bullet.prototype = new Drawable;
 //Enemy object, inherits from Drawable
 function Enemy(){
 	this.speed = 4;
-	this.ctx = document.getElementById("enemyCanvas").getContext("2d");
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*600)-600);
 		this.x = Math.floor(Math.random()*800)
 	}
 	this.draw = function(){
+		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 		this.y += this.speed;
 		this.ctx.drawImage(this.image, this.x, this.y);
@@ -177,7 +178,7 @@ function BulletPool(maxSize){
 	this.init = function(){
 		for (var i = 0; i < size; i++) {
 			var bullet = new Bullet();
-			bullet.init(0,0,10,10,imageRepository.bullet);
+			bullet.init(0,0,imageRepository.bullet,"playerShootCanvas");
 			pool[i] = bullet;
 		}
 	}
@@ -213,7 +214,7 @@ function EnemyPool(maxSize){
 			var x = Math.floor(Math.random()*800);
 			var y = Math.floor((Math.random()*600)-600);
 			var enemy = new Enemy();
-			enemy.init(x,y,50,50,imageRepository.enemy1);
+			enemy.init(x,y,imageRepository.enemy1,"enemyCanvas");
 			pool[i] = enemy;
 		}
 	}
@@ -257,12 +258,11 @@ function game(){
 
 	//background init
 	background1 = new Background();
-	background1.init(0,0,0,0,imageRepository.background1);
-	background1.canvasHeight = document.getElementById("backgroundCanvas").height;
+	background1.init(0,0,imageRepository.background1,"backgroundCanvas");
 
 	//player init
 	player = new Player();
-	player.init(375,475,25,25,imageRepository.player);
+	player.init(375,475,imageRepository.player,"playerCanvas");
 
 	//enemyPool init
 	enemyPool1 = new EnemyPool(10);
