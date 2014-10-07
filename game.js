@@ -54,8 +54,6 @@ function Drawable(){
 		this.canvas = document.getElementById(canvas);
 	}
 	this.speed = 0;
-	this.canvasWidth = 0;
-	this.canvasHeight = 0;
 }
 //Background object, inherits from Drawable
 function Background(){
@@ -92,16 +90,20 @@ function Player(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.drawImage(this.image, this.x, this.y)
 	}
+	this.clearRect = function(){
+		this.ctx = this.canvas.getContext("2d");
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+	}
 	this.inputs = function(){
 		if(37 in keys || 38 in keys || 39 in keys || 40 in keys){
-			this.ctx.clearRect(this.x,this.y,this.width,this.height);
+			this.clearRect();
 			if(38 in keys && this.y >=0){
 				this.y -= 4;
 			}
-			if(40 in keys && this.y <= 575){
+			if(40 in keys && this.y <= (this.canvas.height-this.height)){
 				this.y += 4;
 			}
-			if(39 in keys && this.x <= 775){
+			if(39 in keys && this.x <= this.canvas.width-this.width){
 				this.x += 4;
 			}
 			if (37 in keys && this.x >= 0) {
@@ -133,7 +135,7 @@ function Bullet(){
 	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
-		this.ctx.clearRect(this.x-1,this.y,this.width+2,this.height);
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 		this.y -= this.speed;
 		if(this.y <= (0 - this.height)){
 			return true;
@@ -155,15 +157,15 @@ Bullet.prototype = new Drawable;
 function Enemy(){
 	this.speed = 4;
 	this.setNewPos = function(){
-		this.y = Math.floor((Math.random()*600)-600);
-		this.x = Math.floor(Math.random()*800)
+		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
+		this.x = Math.floor(Math.random()*this.canvas.width);
 	}
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 		this.y += this.speed;
 		this.ctx.drawImage(this.image, this.x, this.y);
-		if (this.y > 650) {
+		if (this.y > this.canvas.height) {
 			this.setNewPos();
 		}
 	}
@@ -206,13 +208,14 @@ function BulletPool(maxSize){
 }
 //creates a pool of enemies
 function EnemyPool(maxSize){
+	var canvas = document.getElementById("enemyCanvas");
 	var size = maxSize;
 	var pool = [];
 	//populates the array
 	this.init = function(){
 		for (var i = 0; i < size; i++){
-			var x = Math.floor(Math.random()*800);
-			var y = Math.floor((Math.random()*600)-600);
+			var x = Math.floor(Math.random()*canvas.width);
+			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
 			var enemy = new Enemy();
 			enemy.init(x,y,imageRepository.enemy1,"enemyCanvas");
 			pool[i] = enemy;
@@ -287,6 +290,7 @@ function game(){
 	//player init
 	player = new Player();
 	player.init(375,475,imageRepository.player,"playerCanvas");
+	player.draw();
 
 	//enemyPool init
 	enemyPool1 = new EnemyPool(10);
@@ -299,29 +303,28 @@ function game(){
 	setInterval(gameLoop,1000/60);
 
 	function gameLoop(){
-		backgroundLoop();
-		playerLoop();
-		enemyLoop();
-		hudLoop();
+		inputs();
+		gameLogic();
+		draw();
+	}
+
+	function inputs(){
+		player.inputs();
+	}
+
+	function gameLogic(){
+		player.count();
+		livesText.txt = "lives: " + player.lives;
 		collisions();
 	}
 
-	function backgroundLoop(){
+	function draw(){
 		background1.draw();
-	}
-	function playerLoop(){
-		player.count();
-		player.inputs();
-		player.draw();
 		player.bulletPool.animate();
-	}
-	function enemyLoop(){
 		enemyPool1.animate();
-	}
-	function hudLoop(){
 		livesText.draw();
-		livesText.txt = "lives: " + player.lives;
 	}
+
 	function collisions(){
 		for (var i = 0; i < enemyPool1.getPool().length; i++) {
 			if(collision(enemyPool1.getPool()[i],player)){
