@@ -266,20 +266,14 @@ function pixelLevelCollision(drawable1,drawable2){
 	var yMax = (drawable1.height + drawable1.y) < (drawable2.height + drawable2.y) ? (drawable1.height + drawable1.y) : (drawable2.height + drawable2.y);
 	var collisionBoxHeight = yMax - collisionBoxY;
 
-	var canvas1 = drawable1.canvas;
-	var context1 = canvas1.getContext('2d');
-	context1.clearRect (0,0,canvas1.width,canvas1.height);
-	context1.drawImage(drawable1.image,drawable1.x,drawable1.y);
-	var drawable1Data = context1.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
+	var context1 = drawable1.canvas.getContext('2d');
+	var context1Data = context1.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
 
-	var canvas2 = drawable2.canvas;
-	var context2 = canvas2.getContext('2d');
-	context2.clearRect (0,0,canvas1.width,canvas1.height);
-	context2.drawImage(drawable2.image,drawable2.x,drawable2.y);
-	var drawable2Data = context2.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
+	var context2 = drawable2.canvas.getContext('2d');
+	var context2Data = context2.getImageData(collisionBoxX,collisionBoxY,collisionBoxWidth,collisionBoxHeight).data;
 
-	for (var i = 3; i < drawable1Data.length; i += 4) {
-		if (drawable1Data[i]>0 && drawable2Data[i]>0) {
+	for (var i = 3; i < context1Data.length; i += 4) {
+		if (context1Data[i]>0 && context2Data[i]>0) {
 			return true;
 		}
 	}
