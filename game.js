@@ -289,11 +289,13 @@ function game(){
 	//player init
 	player = new Player();
 	player.init(375,475,imageRepository.player,"playerCanvas");
-	player.draw();
 
 	//enemyPool init
 	enemyPool1 = new EnemyPool(10);
 	enemyPool1.init();
+
+	clearCanvases();
+	player.draw();
 
 	var loop = setInterval(gameLoop,1000/60);
 
@@ -354,15 +356,15 @@ function game(){
 		}
 	}
 	//clears player, enemies, and bullets canvases
-	//function clearCanvases(){
-	//	var playerCanvas = document.getElementById("playerCanvas");
-	//	var enemiesCanvas = document.getElementById("enemyCanvas");
-	//	var playerBulletsCanvas = document.getElementById("playerShootCanvas");
-	//	var playerCtx = playerCanvas.getContext("2d");
-	//	var enemiesCtx = enemiesCanvas.getContext("2d");
-	//	var playerBulletsCtx = playerBulletsCanvas.getContext("2d");
-	//	playerCtx.clearRect(0,0,playerCanvas.width,playerCanvas.height);
-	//	enemiesCtx.clearRect(0,0,enemiesCanvas.width,enemiesCanvas.height);
-	//	playerBulletsCtx.clearRect(0,0,playerBulletsCanvas.width,playerBulletsCanvas.height);
-	//}
+	function clearCanvases(){
+		var playerCanvas = document.getElementById("playerCanvas");
+		var enemiesCanvas = document.getElementById("enemyCanvas");
+		var playerBulletsCanvas = document.getElementById("playerShootCanvas");
+		var playerCtx = playerCanvas.getContext("2d");
+		var enemiesCtx = enemiesCanvas.getContext("2d");
+		var playerBulletsCtx = playerBulletsCanvas.getContext("2d");
+		playerCtx.clearRect(0,0,playerCanvas.width,playerCanvas.height);
+		enemiesCtx.clearRect(0,0,enemiesCanvas.width,enemiesCanvas.height);
+		playerBulletsCtx.clearRect(0,0,playerBulletsCanvas.width,playerBulletsCanvas.height);
+	}
 }
