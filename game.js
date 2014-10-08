@@ -29,22 +29,6 @@ var imageRepository = new function(){
 	this.enemy1.src = "enemy1.png"
 }
 
-//Text object
-function Text(){
-	this.init = function(x,y,txt){
-		this.x = x;
-		this.y = y;
-		this.txt = txt;
-	}
-	this.draw = function(){
-		this.ctx = document.getElementById("UICanvas").getContext("2d");
-		this.ctx.font = "30px Arial";
-		this.ctx.fillStyle ="blue";
-		this.ctx.clearRect(this.x,this.y-30,200,30);
-		this.ctx.fillText(this.txt,this.x,this.y);
-	}
-}
-
 //base class for drawable objects
 function Drawable(){
 	this.init = function(x,y,image,canvas){
@@ -310,10 +294,6 @@ function game(){
 	enemyPool1 = new EnemyPool(10);
 	enemyPool1.init();
 
-	//hud
-	livesText = new Text();
-	livesText.init(20,580,"lives: ");
-
 	setInterval(gameLoop,1000/60);
 
 	function gameLoop(){
@@ -329,7 +309,7 @@ function game(){
 
 	function gameLogic(){
 		player.count();
-		livesText.txt = "lives: " + player.lives;
+		interface();
 	}
 
 	function draw(){
@@ -358,5 +338,9 @@ function game(){
 				}
 			}
 		}
+	}
+	//HUD
+	function interface(){
+		document.getElementById("lives").innerHTML = player.lives;
 	}
 }
