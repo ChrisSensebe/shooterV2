@@ -28,6 +28,7 @@ var imageRepository = new function(){
 	this.enemy1 = new Image();
 	this.enemy1.src = "enemy1.png"
 }
+
 //Text object
 function Text(){
 	this.init = function(x,y,txt){
@@ -43,6 +44,7 @@ function Text(){
 		this.ctx.fillText(this.txt,this.x,this.y);
 	}
 }
+
 //base class for drawable objects
 function Drawable(){
 	this.init = function(x,y,image,canvas){
@@ -54,7 +56,9 @@ function Drawable(){
 		this.canvas = document.getElementById(canvas);
 	}
 	this.speed = 0;
+	this.isColliding = false;
 }
+
 //Background object, inherits from Drawable
 function Background(){
 	this.speed = 1;
@@ -69,6 +73,7 @@ function Background(){
 	}
 }
 Background.prototype = new Drawable();
+
 //Player object, inherits from Drawable
 function Player(){
 	this.speed = 4;
@@ -121,6 +126,7 @@ function Player(){
 	}
 }
 Player.prototype = new Drawable();
+
 //Bullet object, inherits from Drawable
 function Bullet(){
 	//true if bullet is in use
@@ -137,29 +143,38 @@ function Bullet(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 		this.y -= this.speed;
-		if(this.y <= (0 - this.height)){
+		if(this.y <= (0 - this.height) || this.isColliding){
 			return true;
 		}
 		else{
 			this.ctx.drawImage(this.image,this.x,this.y);
 		}
 	}
-	//reset the bullet values
+	//resets the bullet values
 	this.clear = function(){
 		this.x = 0;
 		this.y = 0;
 		this.speed = 0;
 		this.alive = false;
+		this.isColliding = false;
 	}
 }
 Bullet.prototype = new Drawable;
+
 //Enemy object, inherits from Drawable
 function Enemy(){
 	this.speed = 4;
+	//erases enemy from canvas
+	this.erase = function(){
+		this.ctx = this.canvas.getContext("2d");
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+	}
+	//set new position for enemy
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
 		this.x = Math.floor(Math.random()*this.canvas.width);
 	}
+	//draws enemy on canvas
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
@@ -191,6 +206,10 @@ function BulletPool(maxSize){
 			pool.unshift(pool.pop());
 		}
 	}
+	//returns pool
+	this.getPool = function(){
+		return pool;
+	}
 	//draws/animate any in use bullet until we find a bullet that is not alive
 	this.animate = function(){
 		for (var i = 0; i < size; i++) {
@@ -206,6 +225,7 @@ function BulletPool(maxSize){
 		}
 	}
 }
+
 //creates a pool of enemies
 function EnemyPool(maxSize){
 	var canvas = document.getElementById("enemyCanvas");
@@ -305,6 +325,7 @@ function game(){
 	function gameLoop(){
 		inputs();
 		gameLogic();
+		collisions();
 		draw();
 	}
 
@@ -315,7 +336,6 @@ function game(){
 	function gameLogic(){
 		player.count();
 		livesText.txt = "lives: " + player.lives;
-		collisions();
 	}
 
 	function draw(){
@@ -326,11 +346,24 @@ function game(){
 	}
 
 	function collisions(){
+		//player wih enemies
 		for (var i = 0; i < enemyPool1.getPool().length; i++) {
 			if(collision(enemyPool1.getPool()[i],player)){
-				if(player.invincibleTimer==30){
+				if(player.invincibleTimer===30){
 					player.invincibleTimer = 0;
 					player.lives--;
+				}
+			}
+		}
+		//player bullets with enemies
+		for(var i=0;i<enemyPool1.getPool().length;i++){
+			for(var j=0;j<player.bulletPool.getPool().length;j++){
+				if(player.bulletPool.getPool()[j].alive){
+					if(collision(enemyPool1.getPool()[i],player.bulletPool.getPool()[j])){
+						enemyPool1.getPool()[i].erase();
+						enemyPool1.getPool()[i].setNewPos();
+						player.bulletPool.getPool()[j].isColliding = true;
+					}
 				}
 			}
 		}
