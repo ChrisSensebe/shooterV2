@@ -62,6 +62,7 @@ Background.prototype = new Drawable();
 function Player(){
 	this.speed = 4;
 	this.lives = 3;
+	this.score = 0;
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
 	var fireRate = 15;
@@ -334,6 +335,7 @@ function game(){
 					if(collision(enemyPool1.getPool()[i],player.bulletPool.getPool()[j])){
 						enemyPool1.getPool()[i].isColliding = true;
 						player.bulletPool.getPool()[j].isColliding = true;
+						player.score++;
 					}
 				}
 			}
@@ -341,6 +343,7 @@ function game(){
 	}
 	//HUD
 	function interface(){
-		document.getElementById("lives").innerHTML = player.lives;
+		document.getElementById("lives").innerHTML = "Lives: " + player.lives;
+		document.getElementById("score").innerHTML = "Score: " + player.score;
 	}
 }
