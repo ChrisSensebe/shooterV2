@@ -349,6 +349,8 @@ function game(){
 		//player wih enemies
 		for (var i = 0; i < enemyPool1.getPool().length; i++) {
 			if(collision(enemyPool1.getPool()[i],player)){
+				enemyPool1.getPool()[i].erase();
+				enemyPool1.getPool()[i].setNewPos();
 				if(player.invincibleTimer===30){
 					player.invincibleTimer = 0;
 					player.lives--;
