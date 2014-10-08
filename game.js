@@ -67,7 +67,7 @@ function Player(){
 	this.bulletPool.init();
 	var fireRate = 15;
 	var fireCounter = 0;
-	this.count = function(){
+	this.updateCounters = function(){
 		if(fireCounter<15){
 			fireCounter++;
 		}
@@ -295,7 +295,7 @@ function game(){
 	enemyPool1 = new EnemyPool(10);
 	enemyPool1.init();
 
-	setInterval(gameLoop,1000/60);
+	var loop = setInterval(gameLoop,1000/60);
 
 	function gameLoop(){
 		inputs();
@@ -309,15 +309,15 @@ function game(){
 	}
 
 	function gameLogic(){
-		player.count();
-		interface();
+		player.updateCounters();
+		updateInterface();
+		updateGame();
 	}
 
 	function draw(){
 		background1.draw();
 		player.bulletPool.animate();
 		enemyPool1.animate();
-		livesText.draw();
 	}
 
 	function collisions(){
@@ -341,9 +341,28 @@ function game(){
 			}
 		}
 	}
-	//HUD
-	function interface(){
+	//game interface
+	function updateInterface(){
 		document.getElementById("lives").innerHTML = "Lives: " + player.lives;
 		document.getElementById("score").innerHTML = "Score: " + player.score;
 	}
+	//game logic
+	function updateGame(){
+		if (player.lives===0) {
+			document.getElementById("gameStatus").innerHTML = "Game Over";
+			clearInterval(loop);
+		}
+	}
+	//clears player, enemies, and bullets canvases
+	//function clearCanvases(){
+	//	var playerCanvas = document.getElementById("playerCanvas");
+	//	var enemiesCanvas = document.getElementById("enemyCanvas");
+	//	var playerBulletsCanvas = document.getElementById("playerShootCanvas");
+	//	var playerCtx = playerCanvas.getContext("2d");
+	//	var enemiesCtx = enemiesCanvas.getContext("2d");
+	//	var playerBulletsCtx = playerBulletsCanvas.getContext("2d");
+	//	playerCtx.clearRect(0,0,playerCanvas.width,playerCanvas.height);
+	//	enemiesCtx.clearRect(0,0,enemiesCanvas.width,enemiesCanvas.height);
+	//	playerBulletsCtx.clearRect(0,0,playerBulletsCanvas.width,playerBulletsCanvas.height);
+	//}
 }
