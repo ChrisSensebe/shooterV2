@@ -78,7 +78,6 @@ Background.prototype = new Drawable();
 function Player(){
 	this.speed = 4;
 	this.lives = 3;
-	this.invincibleTimer = 30;
 	this.bulletPool = new BulletPool(15);
 	this.bulletPool.init();
 	var fireRate = 15;
@@ -86,9 +85,6 @@ function Player(){
 	this.count = function(){
 		if(fireCounter<15){
 			fireCounter++;
-		}
-		if (this.invincibleTimer<30) {
-			this.invincibleTimer++;
 		}
 	}
 	this.draw = function(){
@@ -164,24 +160,22 @@ Bullet.prototype = new Drawable;
 //Enemy object, inherits from Drawable
 function Enemy(){
 	this.speed = 4;
-	//erases enemy from canvas
-	this.erase = function(){
-		this.ctx = this.canvas.getContext("2d");
-		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-	}
 	//set new position for enemy
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
 		this.x = Math.floor(Math.random()*this.canvas.width);
+		this.isColliding = false;
 	}
 	//draws enemy on canvas
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-		this.y += this.speed;
-		this.ctx.drawImage(this.image, this.x, this.y);
-		if (this.y > this.canvas.height) {
+		if (this.y > this.canvas.height || this.isColliding) {
 			this.setNewPos();
+		}
+		else{
+			this.y += this.speed;
+			this.ctx.drawImage(this.image, this.x, this.y);
 		}
 	}
 }
@@ -349,12 +343,8 @@ function game(){
 		//player wih enemies
 		for (var i = 0; i < enemyPool1.getPool().length; i++) {
 			if(collision(enemyPool1.getPool()[i],player)){
-				enemyPool1.getPool()[i].erase();
-				enemyPool1.getPool()[i].setNewPos();
-				if(player.invincibleTimer===30){
-					player.invincibleTimer = 0;
-					player.lives--;
-				}
+				enemyPool1.getPool()[i].isColliding = true;
+				player.lives--;
 			}
 		}
 		//player bullets with enemies
@@ -362,8 +352,7 @@ function game(){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
 				if(player.bulletPool.getPool()[j].alive){
 					if(collision(enemyPool1.getPool()[i],player.bulletPool.getPool()[j])){
-						enemyPool1.getPool()[i].erase();
-						enemyPool1.getPool()[i].setNewPos();
+						enemyPool1.getPool()[i].isColliding = true;
 						player.bulletPool.getPool()[j].isColliding = true;
 					}
 				}
