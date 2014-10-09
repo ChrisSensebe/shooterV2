@@ -1,4 +1,7 @@
+var started = false;
+var paused = false;
 var keys = {};
+
 //event listeners
 addEventListener("keydown",
 	function(e){
@@ -282,27 +285,31 @@ function pixelLevelCollision(drawable1,drawable2){
 
 function game(){
 
-	//background init
-	background1 = new Background();
-	background1.init(0,0,imageRepository.background1,"backgroundCanvas");
+	if(!started){
+		newGame();
+	}
 
-	//player init
-	player = new Player();
-	player.init(375,475,imageRepository.player,"playerCanvas");
-
-	//enemyPool init
-	enemyPool1 = new EnemyPool(10);
-	enemyPool1.init();
-
-	clearCanvases();
-	player.draw();
-
-	var loop = setInterval(gameLoop,1000/60);
-
+	function newGame(){
+		clearCanvases();
+		document.getElementById("gameStatus").innerHTML = "";
+		//background init
+		background1 = new Background();
+		background1.init(0,0,imageRepository.background1,"backgroundCanvas");
+		//player init
+		player = new Player();
+		player.init(375,475,imageRepository.player,"playerCanvas");
+		player.draw();
+		//enemyPool init
+		enemyPool1 = new EnemyPool(10);
+		enemyPool1.init();
+		//starts game loop
+		started = true;
+		interval = setInterval(gameLoop,1000/60);
+	}
+	
 	function gameLoop(){
 		inputs();
 		gameLogic();
-		collisions();
 		draw();
 	}
 
@@ -312,6 +319,7 @@ function game(){
 
 	function gameLogic(){
 		player.updateCounters();
+		collisions();
 		updateInterface();
 		updateGame();
 	}
@@ -348,11 +356,12 @@ function game(){
 		document.getElementById("lives").innerHTML = "Lives: " + player.lives;
 		document.getElementById("score").innerHTML = "Score: " + player.score;
 	}
-	//game logic
+	//updates gameStatus text
 	function updateGame(){
-		if (player.lives===0) {
+		if (player.lives<=0) {
 			document.getElementById("gameStatus").innerHTML = "Game Over";
-			clearInterval(loop);
+			clearInterval(interval);
+			started = false;
 		}
 	}
 	//clears player, enemies, and bullets canvases
