@@ -38,13 +38,6 @@ var imageRepository = new function(){
 	this.enemy1.src = "enemy1.png"
 }
 
-//HUD object
-function HUD(){
-	this.livesHUD = document.getElementById("lives").innerHTML = "Lives: " + player.lives;
-	this.scoreHUD = document.getElementById("score").innerHTML = "Score: " + player.score;
-	this.gameStatusHUD = document.getElementById("gameStatus").innerHTML = "";
-}
-
 //base class for drawable objects
 function Drawable(){
 	this.init = function(x,y,image,canvas){
@@ -351,13 +344,12 @@ function gameLoop(){
 	function gameLogic(){
 		player.updateCounters();
 		collisions();
-		updateInterface();
-		//updateGame();
 	}
 	function draw(){
 		background1.draw();
 		player.bulletPool.animate();
 		enemyPool1.animate();
+		updateInterface();
 	}
 	function collisions(){
 		//player wih enemies
@@ -384,14 +376,6 @@ function gameLoop(){
 	function updateInterface(){
 		document.getElementById("lives").innerHTML = "Lives: " + player.lives;
 		document.getElementById("score").innerHTML = "Score: " + player.score;
-		if (player.lives<=0) {
-			document.getElementById("gameStatus").innerHTML = "Game Over";
-			clearInterval(interval);
-			started = false;
-		}
-	}
-	//updates gameStatus text
-	function updateGame(){
 		if (player.lives<=0) {
 			document.getElementById("gameStatus").innerHTML = "Game Over";
 			clearInterval(interval);
