@@ -14,6 +14,12 @@ addEventListener("keyup",
 function(e){
 	delete keys[e.keyCode];
 });
+addEventListener("keypress",
+function(e){
+	if(e.keyCode == 13 && started){
+		togglePause();
+	}
+});
 
 
 //holds all images for the game
@@ -30,6 +36,13 @@ var imageRepository = new function(){
 	//enemy1
 	this.enemy1 = new Image();
 	this.enemy1.src = "enemy1.png"
+}
+
+//HUD object
+function HUD(){
+	this.livesHUD = document.getElementById("lives").innerHTML = "Lives: " + player.lives;
+	this.scoreHUD = document.getElementById("score").innerHTML = "Score: " + player.score;
+	this.gameStatusHUD = document.getElementById("gameStatus").innerHTML = "";
 }
 
 //base class for drawable objects
@@ -245,13 +258,6 @@ function EnemyPool(maxSize){
 	}
 }
 
-//collision function between two drawable objects
-function collision(drawable1,drawable2){
-	if (boxCollision(drawable1,drawable2)){
-		return pixelLevelCollision(drawable1,drawable2);
-	}
-}
-
 //box collision function
 function boxCollision(drawable1,drawable2){
 	var widthCollide = (drawable1.x > (drawable2.x-drawable1.width) && drawable1.x < (drawable2.x+drawable2.width));
@@ -283,35 +289,60 @@ function pixelLevelCollision(drawable1,drawable2){
 	return false;
 }
 
-function game(){
+function togglePause(){
+	if(paused){
+		interval = setInterval(gameLoop,1000/60);
+		document.getElementById("gameStatus").innerHTML = "";
+	}
+	else{
+		clearInterval(interval);
+		document.getElementById("gameStatus").innerHTML = "Paused";
+	}
+	paused = !paused;
+}
 
+//clears player, enemies, and bullets canvases
+function clearCanvases(){
+	var playerCanvas = document.getElementById("playerCanvas");
+	var enemiesCanvas = document.getElementById("enemyCanvas");
+	var playerBulletsCanvas = document.getElementById("playerShootCanvas");
+	var playerCtx = playerCanvas.getContext("2d");
+	var enemiesCtx = enemiesCanvas.getContext("2d");
+	var playerBulletsCtx = playerBulletsCanvas.getContext("2d");
+	playerCtx.clearRect(0,0,playerCanvas.width,playerCanvas.height);
+	enemiesCtx.clearRect(0,0,enemiesCanvas.width,enemiesCanvas.height);
+	playerBulletsCtx.clearRect(0,0,playerBulletsCanvas.width,playerBulletsCanvas.height);
+}
+
+function newGame(){
+	clearCanvases();
+	document.getElementById("gameStatus").innerHTML = "";
+	//background init
+	background1 = new Background();
+	background1.init(0,0,imageRepository.background1,"backgroundCanvas");
+	//player init
+	player = new Player();
+	player.init(375,475,imageRepository.player,"playerCanvas");
+	player.draw();
+	//enemyPool init
+	enemyPool1 = new EnemyPool(10);
+	enemyPool1.init();
+	//starts game loop
+	started = true;
+	interval = setInterval(gameLoop,1000/60);
+}
+
+function game(){
 	if(!started){
 		newGame();
 	}
+}
 
-	function newGame(){
-		clearCanvases();
-		document.getElementById("gameStatus").innerHTML = "";
-		//background init
-		background1 = new Background();
-		background1.init(0,0,imageRepository.background1,"backgroundCanvas");
-		//player init
-		player = new Player();
-		player.init(375,475,imageRepository.player,"playerCanvas");
-		player.draw();
-		//enemyPool init
-		enemyPool1 = new EnemyPool(10);
-		enemyPool1.init();
-		//starts game loop
-		started = true;
-		interval = setInterval(gameLoop,1000/60);
-	}
-	
-	function gameLoop(){
-		inputs();
-		gameLogic();
-		draw();
-	}
+function gameLoop(){
+
+	inputs();
+	gameLogic();
+	draw();
 
 	function inputs(){
 		player.inputs();
@@ -321,15 +352,13 @@ function game(){
 		player.updateCounters();
 		collisions();
 		updateInterface();
-		updateGame();
+		//updateGame();
 	}
-
 	function draw(){
 		background1.draw();
 		player.bulletPool.animate();
 		enemyPool1.animate();
 	}
-
 	function collisions(){
 		//player wih enemies
 		for (var i = 0; i < enemyPool1.getPool().length; i++) {
@@ -355,6 +384,11 @@ function game(){
 	function updateInterface(){
 		document.getElementById("lives").innerHTML = "Lives: " + player.lives;
 		document.getElementById("score").innerHTML = "Score: " + player.score;
+		if (player.lives<=0) {
+			document.getElementById("gameStatus").innerHTML = "Game Over";
+			clearInterval(interval);
+			started = false;
+		}
 	}
 	//updates gameStatus text
 	function updateGame(){
@@ -364,16 +398,10 @@ function game(){
 			started = false;
 		}
 	}
-	//clears player, enemies, and bullets canvases
-	function clearCanvases(){
-		var playerCanvas = document.getElementById("playerCanvas");
-		var enemiesCanvas = document.getElementById("enemyCanvas");
-		var playerBulletsCanvas = document.getElementById("playerShootCanvas");
-		var playerCtx = playerCanvas.getContext("2d");
-		var enemiesCtx = enemiesCanvas.getContext("2d");
-		var playerBulletsCtx = playerBulletsCanvas.getContext("2d");
-		playerCtx.clearRect(0,0,playerCanvas.width,playerCanvas.height);
-		enemiesCtx.clearRect(0,0,enemiesCanvas.width,enemiesCanvas.height);
-		playerBulletsCtx.clearRect(0,0,playerBulletsCanvas.width,playerBulletsCanvas.height);
+	//collision function between two drawable objects
+	function collision(drawable1,drawable2){
+		if (boxCollision(drawable1,drawable2)){
+			return pixelLevelCollision(drawable1,drawable2);
+		}
 	}
 }
