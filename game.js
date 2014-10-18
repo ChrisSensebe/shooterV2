@@ -27,6 +27,9 @@ var imageRepository = new function(){
 	//background1
 	this.background1 = new Image();
 	this.background1.src = "background1.png";
+	//background2
+	this.background2 = new Image();
+	this.background2.src = "background2.png";
 	//player
 	this.player = new Image();
 	this.player.src = "player.png";
@@ -153,7 +156,7 @@ Bullet.prototype = new Drawable;
 
 //Enemy object, inherits from Drawable
 function Enemy(){
-	this.speed = 4;
+	this.speed = 3;
 	//set new position for enemy
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
@@ -312,7 +315,10 @@ function newGame(){
 	document.getElementById("gameStatus").innerHTML = "";
 	//background init
 	background1 = new Background();
-	background1.init(0,0,imageRepository.background1,"backgroundCanvas");
+	background1.init(0,0,imageRepository.background1,"backgroundCanvas1");
+	background2 = new Background();
+	background2.init(0,0,imageRepository.background2,"backgroundCanvas2");
+	background2.speed = 2;
 	//player init
 	player = new Player();
 	player.init(375,475,imageRepository.player,"playerCanvas");
@@ -347,6 +353,8 @@ function gameLoop(){
 	}
 	function draw(){
 		background1.draw();
+		document.getElementById("backgroundCanvas2").getContext("2d").clearRect(0,0,800,600);
+		background2.draw();
 		player.bulletPool.animate();
 		enemyPool1.animate();
 		updateInterface();
