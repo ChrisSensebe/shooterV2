@@ -38,7 +38,10 @@ var imageRepository = new function(){
 	this.bullet.src = "shoot1.png";
 	//enemy1
 	this.enemy1 = new Image();
-	this.enemy1.src = "enemy1.png"
+	this.enemy1.src = "enemy1.png";
+	//asteroid
+	this.asteroid = new Image();
+	this.asteroid.src = "asteroid50px.png";
 }
 
 //base class for drawable objects
