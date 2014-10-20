@@ -123,64 +123,6 @@ function Player(){
 }
 Player.prototype = new Drawable();
 
-//Bullet object, inherits from Drawable
-function Bullet(){
-	//true if bullet is in use
-	this.alive = false;
-	//set bullet values when fired
-	this.spawn = function(x,y,speed){
-		this.x = x;
-		this.y = y;
-		this.speed = speed;
-		this.alive = true;
-	}
-	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
-	this.draw = function(){
-		this.ctx = this.canvas.getContext("2d");
-		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-		this.y -= this.speed;
-		if(this.y <= (0 - this.height) || this.isColliding){
-			return true;
-		}
-		else{
-			this.ctx.drawImage(this.image,this.x,this.y);
-		}
-	}
-	//resets the bullet values
-	this.clear = function(){
-		this.x = 0;
-		this.y = 0;
-		this.speed = 0;
-		this.alive = false;
-		this.isColliding = false;
-	}
-}
-Bullet.prototype = new Drawable;
-
-//Enemy object, inherits from Drawable
-function Enemy(){
-	this.speed = 3;
-	//set new position for enemy
-	this.setNewPos = function(){
-		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
-		this.x = Math.floor(Math.random()*this.canvas.width);
-		this.isColliding = false;
-	}
-	//draws enemy on canvas
-	this.draw = function(){
-		this.ctx = this.canvas.getContext("2d");
-		this.ctx.clearRect(this.x,this.y,this.width,this.height);
-		if (this.y > this.canvas.height || this.isColliding) {
-			this.setNewPos();
-		}
-		else{
-			this.y += this.speed;
-			this.ctx.drawImage(this.image, this.x, this.y);
-		}
-	}
-}
-Enemy.prototype = new Drawable;
-
 //creates a pool of bullets
 function BulletPool(maxSize){
 	var size = maxSize;
@@ -220,6 +162,40 @@ function BulletPool(maxSize){
 	}
 }
 
+//Bullet object, inherits from Drawable
+function Bullet(){
+	//true if bullet is in use
+	this.alive = false;
+	//set bullet values when fired
+	this.spawn = function(x,y,speed){
+		this.x = x;
+		this.y = y;
+		this.speed = speed;
+		this.alive = true;
+	}
+	//draw method return true if moved offscreen --> bullet is ready to be cleared by the pool
+	this.draw = function(){
+		this.ctx = this.canvas.getContext("2d");
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+		this.y -= this.speed;
+		if(this.y <= (0 - this.height) || this.isColliding){
+			return true;
+		}
+		else{
+			this.ctx.drawImage(this.image,this.x,this.y);
+		}
+	}
+	//resets the bullet values
+	this.clear = function(){
+		this.x = 0;
+		this.y = 0;
+		this.speed = 0;
+		this.alive = false;
+		this.isColliding = false;
+	}
+}
+Bullet.prototype = new Drawable;
+
 //creates a pool of enemies
 function EnemyPool(maxSize){
 	var canvas = document.getElementById("enemyCanvas");
@@ -256,6 +232,30 @@ function EnemyPool(maxSize){
 		return pool;
 	}
 }
+
+//Enemy object, inherits from Drawable
+function Enemy(){
+	this.speed = 3;
+	//set new position for enemy
+	this.setNewPos = function(){
+		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
+		this.x = Math.floor(Math.random()*this.canvas.width);
+		this.isColliding = false;
+	}
+	//draws enemy on canvas
+	this.draw = function(){
+		this.ctx = this.canvas.getContext("2d");
+		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+		if (this.y > this.canvas.height || this.isColliding) {
+			this.setNewPos();
+		}
+		else{
+			this.y += this.speed;
+			this.ctx.drawImage(this.image, this.x, this.y);
+		}
+	}
+}
+Enemy.prototype = new Drawable;
 
 //box collision function
 function boxCollision(drawable1,drawable2){
