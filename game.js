@@ -196,7 +196,7 @@ function Bullet(){
 }
 Bullet.prototype = new Drawable;
 
-//creates a pool of enemies
+//creates a pool of asteroids
 function AsteroidPool(maxSize){
 	var canvas = document.getElementById("enemyCanvas");
 	var size = maxSize;
@@ -206,12 +206,12 @@ function AsteroidPool(maxSize){
 		for (var i = 0; i < size; i++){
 			var x = Math.floor(Math.random()*canvas.width);
 			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
-			var enemy = new Enemy();
-			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas");
-			pool[i] = enemy;
+			var asteroid = new Asteroid();
+			asteroid.init(x,y,imageRepository.asteroid,"enemyCanvas");
+			pool[i] = asteroid;
 		}
 	}
-	//animates enemies
+	//animates asteroids
 	this.animate = function(){
 		//checks if there is already a enemy at this position
 		for (var i = 0; i < pool.length; i++) {
@@ -233,16 +233,16 @@ function AsteroidPool(maxSize){
 	}
 }
 
-//Enemy object, inherits from Drawable
-function Enemy(){
+//Asteroid object, inherits from Drawable
+function Asteroid(){
 	this.speed = 3;
-	//set new position for enemy
+	//set new position for asteroid
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
 		this.x = Math.floor(Math.random()*this.canvas.width);
 		this.isColliding = false;
 	}
-	//draws enemy on canvas
+	//draws asteroid on canvas
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
@@ -255,7 +255,7 @@ function Enemy(){
 		}
 	}
 }
-Enemy.prototype = new Drawable;
+Asteroid.prototype = new Drawable;
 
 //box collision function
 function boxCollision(drawable1,drawable2){
@@ -326,7 +326,7 @@ function newGame(){
 	player = new Player();
 	player.init(375,475,imageRepository.player,"playerCanvas");
 	player.draw();
-	//enemyPool init
+	//asteroidPool init
 	asteroidPool = new AsteroidPool(10);
 	asteroidPool.init();
 	//starts game loop
