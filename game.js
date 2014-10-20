@@ -197,7 +197,7 @@ function Bullet(){
 Bullet.prototype = new Drawable;
 
 //creates a pool of enemies
-function EnemyPool(maxSize){
+function AsteroidPool(maxSize){
 	var canvas = document.getElementById("enemyCanvas");
 	var size = maxSize;
 	var pool = [];
@@ -207,7 +207,7 @@ function EnemyPool(maxSize){
 			var x = Math.floor(Math.random()*canvas.width);
 			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
 			var enemy = new Enemy();
-			enemy.init(x,y,imageRepository.enemy1,"enemyCanvas");
+			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas");
 			pool[i] = enemy;
 		}
 	}
@@ -327,8 +327,8 @@ function newGame(){
 	player.init(375,475,imageRepository.player,"playerCanvas");
 	player.draw();
 	//enemyPool init
-	enemyPool1 = new EnemyPool(10);
-	enemyPool1.init();
+	asteroidPool = new AsteroidPool(10);
+	asteroidPool.init();
 	//starts game loop
 	started = true;
 	interval = setInterval(gameLoop,1000/60);
@@ -359,23 +359,23 @@ function gameLoop(){
 		document.getElementById("backgroundCanvas2").getContext("2d").clearRect(0,0,800,600);
 		background2.draw();
 		player.bulletPool.animate();
-		enemyPool1.animate();
+		asteroidPool.animate();
 		updateInterface();
 	}
 	function collisions(){
 		//player wih enemies
-		for (var i = 0; i < enemyPool1.getPool().length; i++) {
-			if(collision(enemyPool1.getPool()[i],player)){
-				enemyPool1.getPool()[i].isColliding = true;
+		for (var i = 0; i < asteroidPool.getPool().length; i++) {
+			if(collision(asteroidPool.getPool()[i],player)){
+				asteroidPool.getPool()[i].isColliding = true;
 				player.lives--;
 			}
 		}
 		//player bullets with enemies
-		for(var i=0;i<enemyPool1.getPool().length;i++){
+		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
 				if(player.bulletPool.getPool()[j].alive){
-					if(collision(enemyPool1.getPool()[i],player.bulletPool.getPool()[j])){
-						enemyPool1.getPool()[i].isColliding = true;
+					if(collision(asteroidPool.getPool()[i],player.bulletPool.getPool()[j])){
+						asteroidPool.getPool()[i].isColliding = true;
 						player.bulletPool.getPool()[j].isColliding = true;
 						player.score++;
 					}
