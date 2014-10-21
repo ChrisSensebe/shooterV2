@@ -52,6 +52,7 @@ function Drawable(){
 		this.width = image.width;
 		this.height = image.height;
 		this.canvas = document.getElementById(canvas);
+		this.ctx = this.canvas.getContext("2d");
 		this.speed = speed;
 
 	}
@@ -227,6 +228,8 @@ function EnemyPool(maxSize,enemyType){
 			}
 		}
 		for (var i = 0; i < pool.length; i++) {
+			pool[i].clearCanvas();
+			pool[i].move();
 			pool[i].draw();
 		}
 	}
@@ -244,17 +247,22 @@ function Enemy(){
 		this.x = Math.floor(Math.random()*this.canvas.width);
 		this.isColliding = false;
 	}
-	//draws enemy on canvas
-	this.draw = function(){
-		this.ctx = this.canvas.getContext("2d");
+	//clears enemy on canvas
+	this.clearCanvas = function(){
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
+	}
+	//moves enemy
+	this.move = function(){
 		if (this.y > this.canvas.height || this.isColliding) {
 			this.setNewPos();
 		}
 		else{
 			this.y += this.speed;
-			this.ctx.drawImage(this.image, this.x, this.y);
 		}
+	}
+	//draws enemy on canvas
+	this.draw = function(){
+		this.ctx.drawImage(this.image, this.x, this.y);
 	}
 }
 Enemy.prototype = new Drawable;
