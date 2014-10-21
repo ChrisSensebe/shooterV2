@@ -267,6 +267,44 @@ function Enemy(){
 }
 Enemy.prototype = new Drawable;
 
+//type 1 enemy
+function Type1Enemy(){
+	this.direction = "";
+	this.move = function(){
+		if (this.direction === "down") {
+			this.y -= this.speed;
+			if (this.y < this.canvas.height*3/4) {
+				this.direction = "left";
+			}
+		}
+		else if(this.direction === "up" ){
+			this.y += this.speed;
+			if (this.y < this.canvas.height/4){
+				this.direction = "right";
+			}
+		}
+		else if(this.direction === "right"){
+			this.x += this.speed;
+			if(this.x > this.canvas.width*3/4){
+				this.direction = "down";
+			}
+		}
+		else if(this.direction === "left"){
+			this.x -= this.speed;
+			if(this.x < this.canvas.width/4){
+				this.direction = "up";
+			}
+		}
+		else{
+			this.y -= this.speed;
+			if(this.y < this.canvas.height/4){
+				this.direction = "right";
+			}
+		}
+	}
+}
+Type1Enemy.prototype = new Enemy;
+
 //box collision function
 function boxCollision(drawable1,drawable2){
 	var widthCollide = (drawable1.x > (drawable2.x-drawable1.width) && drawable1.x < (drawable2.x+drawable2.width));
