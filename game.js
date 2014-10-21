@@ -118,7 +118,7 @@ function Player(){
 		}
 	}
 	this.fire = function(){
-		this.bulletPool.get(this.x+7, this.y, 6);
+		this.bulletPool.get(this.x+this.width/2 -5, this.y, 6);
 	}
 }
 Player.prototype = new Drawable();
