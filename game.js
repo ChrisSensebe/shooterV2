@@ -198,18 +198,20 @@ function Bullet(){
 Bullet.prototype = new Drawable;
 
 //creates a pool of enemies
-function EnemyPool(maxSize){
+function EnemyPool(maxSize,enemyType){
 	var canvas = document.getElementById("enemyCanvas");
 	var size = maxSize;
 	var pool = [];
 	//populates the array
 	this.init = function(){
-		for (var i = 0; i < size; i++){
-			var x = Math.floor(Math.random()*canvas.width);
-			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
-			var enemy = new Enemy();
-			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas",3);
-			pool[i] = enemy;
+		if(enemyType === "asteroid"){
+			for (var i = 0; i < size; i++){
+				var x = Math.floor(Math.random()*canvas.width);
+				var y = Math.floor((Math.random()*canvas.height)-canvas.height);
+				var enemy = new Enemy();
+				enemy.init(x,y,imageRepository.asteroid,"enemyCanvas",3);
+				pool[i] = enemy;
+			}
 		}
 	}
 	//animates enemes
@@ -327,7 +329,7 @@ function newGame(){
 	player.init(375,475,imageRepository.player,"playerCanvas");
 	player.draw();
 	//enemyPool init
-	enemyPool = new EnemyPool(10);
+	enemyPool = new EnemyPool(10,"asteroid");
 	enemyPool.init();
 	//starts game loop
 	started = true;
