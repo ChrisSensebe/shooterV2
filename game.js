@@ -45,13 +45,15 @@ var imageRepository = new function(){
 
 //base class for drawable objects
 function Drawable(){
-	this.init = function(x,y,image,canvas){
+	this.init = function(x,y,image,canvas,speed){
 		this.x = x;
 		this.y = y;
 		this.image = image;
 		this.width = image.width;
 		this.height = image.height;
 		this.canvas = document.getElementById(canvas);
+		this.speed = speed;
+
 	}
 	this.speed = 0;
 	this.isColliding = false;
@@ -206,7 +208,7 @@ function EnemyPool(maxSize){
 			var x = Math.floor(Math.random()*canvas.width);
 			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
 			var enemy = new Enemy();
-			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas");
+			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas",3);
 			pool[i] = enemy;
 		}
 	}
@@ -234,7 +236,6 @@ function EnemyPool(maxSize){
 
 //Enemy object, inherits from Drawable
 function Enemy(){
-	this.speed = 3;
 	//set new position for enemy
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
