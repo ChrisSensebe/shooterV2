@@ -21,7 +21,6 @@ function(e){
 	}
 });
 
-
 //holds all images for the game
 var imageRepository = new function(){
 	//background1
@@ -196,8 +195,8 @@ function Bullet(){
 }
 Bullet.prototype = new Drawable;
 
-//creates a pool of asteroids
-function AsteroidPool(maxSize){
+//creates a pool of enemies
+function EnemyPool(maxSize){
 	var canvas = document.getElementById("enemyCanvas");
 	var size = maxSize;
 	var pool = [];
@@ -206,12 +205,12 @@ function AsteroidPool(maxSize){
 		for (var i = 0; i < size; i++){
 			var x = Math.floor(Math.random()*canvas.width);
 			var y = Math.floor((Math.random()*canvas.height)-canvas.height);
-			var asteroid = new Asteroid();
-			asteroid.init(x,y,imageRepository.asteroid,"enemyCanvas");
-			pool[i] = asteroid;
+			var enemy = new Enemy();
+			enemy.init(x,y,imageRepository.asteroid,"enemyCanvas");
+			pool[i] = enemy;
 		}
 	}
-	//animates asteroids
+	//animates enemes
 	this.animate = function(){
 		//checks if there is already a enemy at this position
 		for (var i = 0; i < pool.length; i++) {
@@ -233,16 +232,16 @@ function AsteroidPool(maxSize){
 	}
 }
 
-//Asteroid object, inherits from Drawable
-function Asteroid(){
+//Enemy object, inherits from Drawable
+function Enemy(){
 	this.speed = 3;
-	//set new position for asteroid
+	//set new position for enemy
 	this.setNewPos = function(){
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
 		this.x = Math.floor(Math.random()*this.canvas.width);
 		this.isColliding = false;
 	}
-	//draws asteroid on canvas
+	//draws enemy on canvas
 	this.draw = function(){
 		this.ctx = this.canvas.getContext("2d");
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
@@ -255,7 +254,7 @@ function Asteroid(){
 		}
 	}
 }
-Asteroid.prototype = new Drawable;
+Enemy.prototype = new Drawable;
 
 //box collision function
 function boxCollision(drawable1,drawable2){
@@ -326,9 +325,9 @@ function newGame(){
 	player = new Player();
 	player.init(375,475,imageRepository.player,"playerCanvas");
 	player.draw();
-	//asteroidPool init
-	asteroidPool = new AsteroidPool(10);
-	asteroidPool.init();
+	//enemyPool init
+	enemyPool = new EnemyPool(10);
+	enemyPool.init();
 	//starts game loop
 	started = true;
 	interval = setInterval(gameLoop,1000/60);
@@ -359,23 +358,23 @@ function gameLoop(){
 		document.getElementById("backgroundCanvas2").getContext("2d").clearRect(0,0,800,600);
 		background2.draw();
 		player.bulletPool.animate();
-		asteroidPool.animate();
+		enemyPool.animate();
 		updateInterface();
 	}
 	function collisions(){
 		//player wih enemies
-		for (var i = 0; i < asteroidPool.getPool().length; i++) {
-			if(collision(asteroidPool.getPool()[i],player)){
-				asteroidPool.getPool()[i].isColliding = true;
+		for (var i = 0; i < enemyPool.getPool().length; i++) {
+			if(collision(enemyPool.getPool()[i],player)){
+				enemyPool.getPool()[i].isColliding = true;
 				player.lives--;
 			}
 		}
 		//player bullets with enemies
-		for(var i=0;i<asteroidPool.getPool().length;i++){
+		for(var i=0;i<enemyPool.getPool().length;i++){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
 				if(player.bulletPool.getPool()[j].alive){
-					if(collision(asteroidPool.getPool()[i],player.bulletPool.getPool()[j])){
-						asteroidPool.getPool()[i].isColliding = true;
+					if(collision(enemyPool.getPool()[i],player.bulletPool.getPool()[j])){
+						enemyPool.getPool()[i].isColliding = true;
 						player.bulletPool.getPool()[j].isColliding = true;
 						player.score++;
 					}
