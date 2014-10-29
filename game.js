@@ -237,7 +237,7 @@ function EnemyPool(maxSize,enemyType){
 			}
 		}
 		for (var i = 0; i < pool.length; i++) {
-			pool[i].clearCanvas();
+			pool[i].clearRect();
 			pool[i].move();
 			pool[i].draw();
 		}
@@ -252,12 +252,13 @@ function EnemyPool(maxSize,enemyType){
 function Enemy(){
 	//set new position for enemy
 	this.setNewPos = function(){
+		this.clearRect();
 		this.y = Math.floor((Math.random()*this.canvas.height)-this.canvas.height);
 		this.x = Math.floor(Math.random()*this.canvas.width);
 		this.isColliding = false;
 	}
 	//clears enemy on canvas
-	this.clearCanvas = function(){
+	this.clearRect = function(){
 		this.ctx.clearRect(this.x,this.y,this.width,this.height);
 	}
 	//moves enemy
@@ -280,6 +281,9 @@ Enemy.prototype = new Drawable;
 function Type1Enemy(){
 	this.direction = "";
 	this.move = function(){
+		if(this.isColliding){
+			this.setNewPos();
+		}
 		if (this.direction === "down") {
 			this.y += this.speed;
 			if (this.y > this.canvas.height*3/4) {
@@ -430,6 +434,12 @@ function gameLoop(){
 				player.lives--;
 			}
 		}
+		for(var i=0;i<enemyPool1.getPool().length;i++){
+			if(collision(enemyPool1.getPool()[i],player)){
+				enemyPool1.getPool([i]).isColliding = true;
+				player.lives--;
+			}
+		}
 		//player bullets with enemies
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
@@ -442,10 +452,22 @@ function gameLoop(){
 				}
 			}
 		}
+		for(var i=0;i<enemyPool1.getPool().length;i++){
+			for(var j=0;j<player.bulletPool.getPool().length;j++){
+				if(player.bulletPool.getPool()[j].alive){
+					if(collision(enemyPool1.getPool()[i],player.bulletPool.getPool()[j])){
+						enemyPool1.getPool()[i].isColliding = true;
+						player.bulletPool.getPool()[j].isColliding = true;
+						player.score++;
+					}
+				}
+			}
+		}
 		//type1Enemy with asteroids
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<enemyPool1.getPool().length;j++){
-				if(collision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
+				if(boxCollision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
+					enemyPool1.getPool()[j].clearRect();
 					enemyPool1.getPool()[j].setNewPos();
 				}
 			}
