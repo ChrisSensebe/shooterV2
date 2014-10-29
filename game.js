@@ -436,7 +436,7 @@ function gameLoop(){
 		}
 		for(var i=0;i<enemyPool1.getPool().length;i++){
 			if(collision(enemyPool1.getPool()[i],player)){
-				enemyPool1.getPool([i]).isColliding = true;
+				enemyPool1.getPool()[i].isColliding = true;
 				player.lives--;
 			}
 		}
