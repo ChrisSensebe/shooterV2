@@ -442,6 +442,14 @@ function gameLoop(){
 				}
 			}
 		}
+		//type1Enemy with asteroids
+		for(var i=0;i<asteroidPool.getPool().length;i++){
+			for(var j=0;j<enemyPool1.getPool().length;j++){
+				if(collision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
+					enemyPool1.getPool()[j].setNewPos();
+				}
+			}
+		}
 	}
 	//game interface
 	function updateInterface(){
