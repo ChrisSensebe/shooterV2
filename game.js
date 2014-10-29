@@ -278,16 +278,16 @@ Enemy.prototype = new Drawable;
 
 //type 1 enemy
 function Type1Enemy(){
-	this.direction = "down";
+	this.direction = "";
 	this.move = function(){
 		if (this.direction === "down") {
-			this.y -= this.speed;
-			if (this.y < this.canvas.height*3/4) {
+			this.y += this.speed;
+			if (this.y > this.canvas.height*3/4) {
 				this.direction = "left";
 			}
 		}
 		else if(this.direction === "up" ){
-			this.y += this.speed;
+			this.y -= this.speed;
 			if (this.y < this.canvas.height/4){
 				this.direction = "right";
 			}
@@ -305,8 +305,8 @@ function Type1Enemy(){
 			}
 		}
 		else{
-			this.y -= this.speed;
-			if(this.y < this.canvas.height/4){
+			this.y += this.speed;
+			if (this.y > this.canvas.height/4) {
 				this.direction = "right";
 			}
 		}
