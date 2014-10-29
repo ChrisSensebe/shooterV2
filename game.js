@@ -214,6 +214,15 @@ function EnemyPool(maxSize,enemyType){
 				pool[i] = enemy;
 			}
 		}
+		else if(enemyType === "enemy1"){
+			for (var i = 0; i < size; i++){
+				var x = Math.floor(Math.random()*canvas.width);
+				var y = Math.floor((Math.random()*canvas.height)-canvas.height);
+				var enemy = new Type1Enemy();
+				enemy.init(x,y,imageRepository.enemy1,"enemyCanvas",3);
+				pool[i] = enemy;
+			}
+		}
 	}
 	//animates enemes
 	this.animate = function(){
@@ -377,6 +386,8 @@ function newGame(){
 	//enemyPool init
 	asteroidPool = new EnemyPool(10,"asteroid");
 	asteroidPool.init();
+	enemyPool1 = new EnemyPool(5,"enemy1");
+	enemyPool1.init();
 	//starts game loop
 	started = true;
 	interval = setInterval(gameLoop,1000/60);
@@ -408,6 +419,7 @@ function gameLoop(){
 		background2.draw();
 		player.bulletPool.animate();
 		asteroidPool.animate();
+		enemyPool1.animate();
 		updateInterface();
 	}
 	function collisions(){
