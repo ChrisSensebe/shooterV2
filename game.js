@@ -278,7 +278,7 @@ Enemy.prototype = new Drawable;
 
 //type 1 enemy
 function Type1Enemy(){
-	this.direction = "";
+	this.direction = "down";
 	this.move = function(){
 		if (this.direction === "down") {
 			this.y -= this.speed;
