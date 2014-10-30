@@ -279,6 +279,36 @@ Enemy.prototype = new Drawable;
 //type 1 enemy
 function Type1Enemy(){
 	this.direction = "beginMove";
+	this.changeDirection = function(){
+		if (this.direction === "beginMove" && this.y > this.canvas.height/4){
+			this.direction = "right";
+		}
+		else if (this.direction === "right" && this.x > this.canvas.width*3/4){
+			this.direction = "down";
+		}
+		else if(this.direction === "down" && this.y > this.canvas.height*3/4){
+			this.direction = "left";
+		}
+		else if(this.direction === "left" && this.x < this.canvas.width/4){
+			this.direction = "up";
+		}
+		else if (this.direction === "up" && this.y < this.canvas.height/4){
+			this.direction = "right";
+		}
+	}
+	this.avoidAsteroid = function(){
+		this.clearRect();
+		if(this.direction === "up"){
+			this.y += this.speed;
+		}
+		this.y += this.speed;
+		if(this.x < this.canvas.width/2){
+			this.x += this.speed;
+		}
+		else{
+			this.x -= this.speed;
+		}
+	}
 	this.move = function(){
 		//sets new position if collision
 		if(this.isColliding){
@@ -301,21 +331,7 @@ function Type1Enemy(){
 			this.y += this.speed;
 		}
 		//direction changes
-		if (this.direction === "beginMove" && this.y > this.canvas.height/4) {
-			this.direction = "right";
-		}
-		else if (this.direction === "right" && this.x > this.canvas.width*3/4){
-			this.direction = "down";
-		}
-		else if(this.direction === "down" && this.y > this.canvas.height*3/4){
-			this.direction = "left";
-		}
-		else if(this.direction === "left" && this.x < this.canvas.width/4){
-			this.direction = "up";
-		}
-		else if (this.direction === "up" && this.y < this.canvas.height/4) {
-			this.direction = "right";
-		}
+		this.changeDirection();
 	}
 }
 Type1Enemy.prototype = new Enemy;
@@ -471,9 +487,7 @@ function gameLoop(){
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<enemyPool1.getPool().length;j++){
 				if(boxCollision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
-					enemyPool1.getPool()[j].isColliding = true;
-					enemyPool1.getPool()[j].clearRect();
-					enemyPool1.getPool()[j].setNewPos();
+					enemyPool1.getPool()[j].avoidAsteroid();
 				}
 			}
 		}
