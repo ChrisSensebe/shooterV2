@@ -54,7 +54,6 @@ function Drawable(){
 		this.canvas = document.getElementById(canvas);
 		this.ctx = this.canvas.getContext("2d");
 		this.speed = speed;
-
 	}
 	this.speed = 0;
 	this.isColliding = false;
@@ -281,38 +280,41 @@ Enemy.prototype = new Drawable;
 function Type1Enemy(){
 	this.direction = "";
 	this.move = function(){
+		//sets new position if collision
 		if(this.isColliding){
 			this.setNewPos();
 		}
+		//moves
 		if (this.direction === "down") {
 			this.y += this.speed;
-			if (this.y > this.canvas.height*3/4) {
-				this.direction = "left";
-			}
 		}
 		else if(this.direction === "up" ){
 			this.y -= this.speed;
-			if (this.y < this.canvas.height/4){
-				this.direction = "right";
-			}
 		}
 		else if(this.direction === "right"){
 			this.x += this.speed;
-			if(this.x > this.canvas.width*3/4){
-				this.direction = "down";
-			}
 		}
 		else if(this.direction === "left"){
 			this.x -= this.speed;
-			if(this.x < this.canvas.width/4){
-				this.direction = "up";
-			}
 		}
 		else{
 			this.y += this.speed;
-			if (this.y > this.canvas.height/4) {
-				this.direction = "right";
-			}
+		}
+		//direction changes
+		if (this.y > this.canvas.height*3/4) {
+			this.direction = "left";
+		}
+		else if (this.y < this.canvas.height/4){
+			this.direction = "right";
+		}
+		else if(this.x > this.canvas.width*3/4){
+			this.direction = "down";
+		}
+		else if(this.x < this.canvas.width/4){
+			this.direction = "up";
+		}
+		else if (this.y > this.canvas.height/4) {
+			this.direction = "right";
 		}
 	}
 }
@@ -441,6 +443,7 @@ function gameLoop(){
 			}
 		}
 		//player bullets with enemies
+		//asteroids
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
 				if(player.bulletPool.getPool()[j].alive){
@@ -452,6 +455,7 @@ function gameLoop(){
 				}
 			}
 		}
+		//enemies
 		for(var i=0;i<enemyPool1.getPool().length;i++){
 			for(var j=0;j<player.bulletPool.getPool().length;j++){
 				if(player.bulletPool.getPool()[j].alive){
@@ -467,6 +471,7 @@ function gameLoop(){
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<enemyPool1.getPool().length;j++){
 				if(boxCollision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
+					enemyPool1.getPool()[j].isColliding = true;
 					enemyPool1.getPool()[j].clearRect();
 					enemyPool1.getPool()[j].setNewPos();
 				}
