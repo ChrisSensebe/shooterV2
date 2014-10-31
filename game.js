@@ -296,17 +296,17 @@ function Type1Enemy(){
 			this.direction = "right";
 		}
 	}
-	this.avoidAsteroid = function(){
+	this.avoidCollision = function(drawable){
 		this.clearRect();
-		if(this.direction === "up"){
-			this.y += this.speed;
+		if(this.direction === "right"){
+			this.x -= 2*this.speed;
 		}
-		this.y += this.speed;
-		if(this.x < this.canvas.width/2){
+		else if(this.direction === "left"){
+			this.x += 2*this.speed;
+		}
+		else if(this.direction === "up"){
+			this.y += 2*this.speed;
 			this.x += this.speed;
-		}
-		else{
-			this.x -= this.speed;
 		}
 	}
 	this.move = function(){
@@ -483,11 +483,12 @@ function gameLoop(){
 				}
 			}
 		}
+		//todo type1Enemy with type1Enemy
 		//type1Enemy with asteroids
 		for(var i=0;i<asteroidPool.getPool().length;i++){
 			for(var j=0;j<enemyPool1.getPool().length;j++){
 				if(boxCollision(asteroidPool.getPool()[i],enemyPool1.getPool()[j])){
-					enemyPool1.getPool()[j].avoidAsteroid();
+					enemyPool1.getPool()[j].avoidCollision();
 				}
 			}
 		}
